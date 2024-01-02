@@ -1,0 +1,6 @@
+tpsreport:
+  emitAfterSeconds: 10
+  dataDog:
+    prefix: statsd
+    host: localhost
+    port: 8125

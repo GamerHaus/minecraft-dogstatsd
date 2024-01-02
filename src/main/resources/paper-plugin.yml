@@ -1,0 +1,4 @@
+name: TPSReport
+version: '${project.version}'
+main: haus.gamer.mc.tpsreport.TPSReport
+api-version: '1.20'
