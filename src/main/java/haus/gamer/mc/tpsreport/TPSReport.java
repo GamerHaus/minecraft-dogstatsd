@@ -33,7 +33,6 @@ public final class TPSReport extends JavaPlugin {
                 for(Player player : Bukkit.getOnlinePlayers()) {
                     ArrayList<String> playerTags = new ArrayList<String>();
                     playerTags.add("player_name:" + player.getName());
-                    playerTags.add("ip_address:" + player.getAddress());
                     playerTags.add("uuid:" + player.getUniqueId());
                     playerTags.addAll(tags);
                     statsd.gauge("minecraft.player.latency", player.getPing(), playerTags.toArray(new String[0]));
