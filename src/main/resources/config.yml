@@ -1,7 +1,15 @@
 tpsreport:
-  emitAfterSeconds: 10
   dataDog:
+    enabled: true
     host: localhost
     port: 8125
-  tags:
-    - "game_server:unknown"
+  # Metric modes are DISABLED, DATADOG, LOG - default DISABLED if not specified
+  metrics:
+    playerPings:
+      mode: DATADOG
+      startDelaySeconds: 0
+      repeatPeriodSeconds: 10
+      metricName: minecraft.player.latency
+      showPlayerName: true
+  globalAlwaysAddedTags:
+  - "game_server:unknown"
