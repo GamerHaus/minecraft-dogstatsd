@@ -5,12 +5,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder;
-import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
-
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.stream.Stream;
 
 public final class TPSReport extends JavaPlugin {
     private RepeatingTask ticker;
