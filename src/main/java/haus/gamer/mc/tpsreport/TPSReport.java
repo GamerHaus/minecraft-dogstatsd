@@ -19,22 +19,12 @@ public final class TPSReport extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        Player player = e.getPlayer();
-        ArrayList<String> playerTags = new ArrayList<>();
-        playerTags.add("player_name:" + player.getName());
-        playerTags.add("uuid:" + player.getUniqueId());
-        playerTags.addAll(tags);
-        statsd.increment("minecraft.player.blocks_broken", playerTags.toArray(new String[0]));
+        statsd.increment("minecraft.player.blocks_modified", getPlayerTags(e.getPlayer()).toArray(new String[0]));
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
-        Player player = e.getPlayer();
-        ArrayList<String> playerTags = new ArrayList<>();
-        playerTags.add("player_name:" + player.getName());
-        playerTags.add("uuid:" + player.getUniqueId());
-        playerTags.addAll(tags);
-        statsd.increment("minecraft.player.blocks_placed", playerTags.toArray(new String[0]));
+        statsd.increment("minecraft.player.blocks_modified", getPlayerTags(e.getPlayer()).toArray(new String[0]));
     }
 
     @Override
@@ -55,10 +45,7 @@ public final class TPSReport extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 for(Player player : Bukkit.getOnlinePlayers()) {
-                    ArrayList<String> playerTags = new ArrayList<String>();
-                    playerTags.add("player_name:" + player.getName());
-                    playerTags.add("uuid:" + player.getUniqueId());
-                    playerTags.addAll(tags);
+                    ArrayList<String> playerTags = getPlayerTags(player);
                     statsd.gauge("minecraft.player.latency", player.getPing(), playerTags.toArray(new String[0]));
                     statsd.gauge("minecraft.player.health", player.getHealth(), playerTags.toArray(new String[0]));
                     statsd.gauge("minecraft.player.food", player.getFoodLevel(), playerTags.toArray(new String[0]));
@@ -90,5 +77,13 @@ public final class TPSReport extends JavaPlugin implements Listener {
         if(ticker != null) {
             ticker.cancelLoop();
         }
+    }
+
+    private ArrayList<String> getPlayerTags(Player player) {
+        ArrayList<String> playerTags = new ArrayList<>();
+        playerTags.add("player_name:" + player.getName());
+        playerTags.add("uuid:" + player.getUniqueId());
+        playerTags.addAll(tags);
+        return playerTags;
     }
 }
