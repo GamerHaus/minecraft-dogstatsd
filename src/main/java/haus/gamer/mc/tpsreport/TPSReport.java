@@ -1,6 +1,7 @@
 package haus.gamer.mc.tpsreport;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder;
@@ -44,10 +45,19 @@ public final class TPSReport extends JavaPlugin {
                 statsd.gauge("minecraft.players", Bukkit.getOnlinePlayers().size(), tags.toArray(new String[0]));
 
                 double[] tps = Bukkit.getServer().getTPS();
-
                 statsd.gauge("minecraft.tps.1", tps[0], tags.toArray(new String[0]));
                 statsd.gauge("minecraft.tps.5", tps[1], tags.toArray(new String[0]));
                 statsd.gauge("minecraft.tps.15", tps[2], tags.toArray(new String[0]));
+
+                for(World world : Bukkit.getServer().getWorlds()) {
+                    ArrayList<String> worldTags = new ArrayList<String>();
+                    worldTags.add("world:" + world.getName());
+                    worldTags.addAll(tags);
+                    statsd.gauge("minecraft.world.loaded_chunks", world.getLoadedChunks().length, worldTags.toArray(new String[0]));
+                    statsd.gauge("minecraft.world.players", world.getPlayerCount(), worldTags.toArray(new String[0]));
+                    statsd.gauge("minecraft.world.entities", world.getEntityCount(), worldTags.toArray(new String[0]));
+                    statsd.gauge("minecraft.world.living_entities", world.getLivingEntities().size(), worldTags.toArray(new String[0]));
+                }
             }
         };
     }
