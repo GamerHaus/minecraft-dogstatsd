@@ -33,8 +33,13 @@ public final class TPSReport extends JavaPlugin {
                 for(Player player : Bukkit.getOnlinePlayers()) {
                     ArrayList<String> playerTags = new ArrayList<String>();
                     playerTags.add("player_name:" + player.getName());
+                    playerTags.add("ip_address:" + player.getAddress());
+                    playerTags.add("uuid:" + player.getUniqueId());
                     playerTags.addAll(tags);
                     statsd.gauge("minecraft.player.latency", player.getPing(), playerTags.toArray(new String[0]));
+                    statsd.gauge("minecraft.player.health", player.getHealth(), playerTags.toArray(new String[0]));
+                    statsd.gauge("minecraft.player.food", player.getFoodLevel(), playerTags.toArray(new String[0]));
+                    statsd.gauge("minecraft.player.level", player.getLevel(), playerTags.toArray(new String[0]));
                 }
 
                 statsd.gauge("minecraft.players", Bukkit.getOnlinePlayers().size(), tags.toArray(new String[0]));
