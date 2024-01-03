@@ -3,26 +3,53 @@ package haus.gamer.mc.tpsreport;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder;
 import com.timgroup.statsd.StatsDClient;
 import java.util.ArrayList;
 
-public final class TPSReport extends JavaPlugin {
+public final class TPSReport extends JavaPlugin implements Listener {
     private RepeatingTask ticker;
     private StatsDClient statsd;
+    private ArrayList<String> tags;
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
+        Player player = e.getPlayer();
+        ArrayList<String> playerTags = new ArrayList<>();
+        playerTags.add("player_name:" + player.getName());
+        playerTags.add("uuid:" + player.getUniqueId());
+        playerTags.addAll(tags);
+        statsd.increment("minecraft.player.blocks_broken", playerTags.toArray(new String[0]));
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent e) {
+        Player player = e.getPlayer();
+        ArrayList<String> playerTags = new ArrayList<>();
+        playerTags.add("player_name:" + player.getName());
+        playerTags.add("uuid:" + player.getUniqueId());
+        playerTags.addAll(tags);
+        statsd.increment("minecraft.player.blocks_placed", playerTags.toArray(new String[0]));
+    }
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         saveResource("config.yml", false);
         saveDefaultConfig();
-        ArrayList<String> tags = new ArrayList<String>(getConfig().getStringList("tpsreport.tags"));
+        tags = new ArrayList<>(getConfig().getStringList("tpsreport.tags"));
 
         statsd = new NonBlockingStatsDClientBuilder()
                 .hostname(getConfig().getString("tpsreport.dataDog.host"))
                 .port(getConfig().getInt("tpsreport.dataDog.port"))
                 .build();
+
+        Bukkit.getPluginManager().registerEvents(this, this);
 
         this.ticker = new RepeatingTask(this, 0, 20 * 10) {
             @Override
