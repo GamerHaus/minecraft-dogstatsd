@@ -1,6 +1,7 @@
 tpsreport:
   emitAfterSeconds: 10
   dataDog:
-    prefix: statsd
     host: localhost
     port: 8125
+  tags:
+    - "game_server:unknown"
