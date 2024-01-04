@@ -5,8 +5,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.timgroup.statsd.NonBlockingStatsDClientBuilder;
 import com.timgroup.statsd.StatsDClient;
@@ -18,13 +17,12 @@ public final class TPSReport extends JavaPlugin implements Listener {
     private ArrayList<String> tags;
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent e) {
-        statsd.increment("minecraft.player.blocks_modified", getPlayerTags(e.getPlayer()).toArray(new String[0]));
+    public void onPlayerInteractEvent(PlayerInteractEvent e) {
+        recordInteraction(e.getPlayer());
     }
 
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent e) {
-        statsd.increment("minecraft.player.blocks_modified", getPlayerTags(e.getPlayer()).toArray(new String[0]));
+    public void recordInteraction(Player player) {
+        statsd.increment("minecraft.player.interactions", getPlayerTags(player).toArray(new String[0]));
     }
 
     @Override
