@@ -57,6 +57,11 @@ public final class TPSReport extends JavaPlugin implements Listener {
                 statsd.gauge("minecraft.tps.5", tps[1], tags.toArray(new String[0]));
                 statsd.gauge("minecraft.tps.15", tps[2], tags.toArray(new String[0]));
 
+
+                Runtime env = Runtime.getRuntime();
+                statsd.gauge("minecraft.java.heap.used", env.totalMemory() - env.freeMemory());
+                statsd.gauge("minecraft.java.heap.available", ((env.maxMemory()-env.totalMemory()) + env.freeMemory()));
+
                 for(World world : Bukkit.getServer().getWorlds()) {
                     ArrayList<String> worldTags = new ArrayList<String>();
                     worldTags.add("world:" + world.getName());
