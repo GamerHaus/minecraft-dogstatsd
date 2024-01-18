@@ -51,6 +51,7 @@ public final class TPSReport extends JavaPlugin implements Listener {
                 }
 
                 statsd.gauge("minecraft.players", Bukkit.getOnlinePlayers().size(), tags.toArray(new String[0]));
+                statsd.gauge("game_server.players", Bukkit.getOnlinePlayers().size(), tags.toArray(new String[0]));
 
                 double[] tps = Bukkit.getServer().getTPS();
                 statsd.gauge("minecraft.tps.1", tps[0], tags.toArray(new String[0]));
